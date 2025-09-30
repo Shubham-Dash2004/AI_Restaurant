@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chat-container {
+            max-height: 400px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .message {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
+        <h2 class="text-2xl font-bold text-center text-amber-800 mb-4">🍽️ Restaurant AI Assistant</h2>
+        <div id="chat" class="chat-container bg-gray-50 rounded-lg p-4 mb-4"></div>
+        <div class="flex flex-col gap-2">
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Ask me: What's on the dinner menu?"
+                class="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <button
+                onclick="sendMessage()"
+                class="bg-amber-600 text-white p-3 rounded-lg hover:bg-amber-700 transition-colors duration-200 flex items-center justify-center"
+                id="sendButton"
+            >
+                <span id="buttonText">Send</span>
+                <svg id="loadingSpinner" class="hidden animate-spin h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput").value.trim();
+            if (!input) return;
+
+            const chatDiv = document.getElementById("chat");
+            const sendButton = document.getElementById("sendButton");
+            const buttonText = document.getElementById("buttonText");
+            const loadingSpinner = document.getElementById("loadingSpinner");
+
+            // Add user message
+            const userMessage = document.createElement("div");
+            userMessage.className = "message mb-3 flex justify-end";
+            userMessage.innerHTML = `<div class="bg-amber-500 text-white p-3 rounded-lg max-w-xs">${input}</div>`;
+            chatDiv.appendChild(userMessage);
+
+            // Show loading state
+            buttonText.textContent = "Sending...";
+            loadingSpinner.classList.remove("hidden");
+            sendButton.disabled = true;
+
+            try {
+                const res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ input })
+                });
+                const data = await res.json();
+
+                // Add bot message
+                const botMessage = document.createElement("div");
+                botMessage.className = "message mb-3 flex justify-start";
+                botMessage.innerHTML = `<div class="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-xs">🤖 ${data.output}</div>`;
+                chatDiv.appendChild(botMessage);
+
+                // Scroll to bottom
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            } catch (error) {
+                const errorMessage = document.createElement("div");
+                errorMessage.className = "message mb-3 flex justify-start";
+                errorMessage.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded-lg max-w-xs">🤖 Error: Could not reach the server</div>`;
+                chatDiv.appendChild(errorMessage);
+            }
+
+            // Reset input and button
+            document.getElementById("userInput").value = "";
+            buttonText.textContent = "Send";
+            loadingSpinner.classList.add("hidden");
+            sendButton.disabled = false;
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById("userInput").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        input,
+        button {
+            padding: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        #chat {
+            white-space: pre-wrap;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>🍽️ Restaurant AI Assistant</h2>
+    <div id="chat"></div>
+    <input type="text" id="userInput" placeholder="Ask me: What's on the
+dinner menu?" />
+    <button onclick="sendMessage()">Send</button>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput").value;
+            const res = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input })
+            });
+            const data = await res.json();
+            const chatDiv = document.getElementById("chat");
+            chatDiv.innerText += `🧑‍💻 You: ${input}\n🤖 Bot: ${data.output}\n\n`;
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+</body>
+
+</html> -->

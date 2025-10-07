@@ -8,13 +8,17 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type":"module",
+  "type": "module",
   "description": "",
   "dependencies": {
     "@langchain/community": "^0.3.56",
     "@langchain/core": "^0.3.77",
     "@langchain/google-genai": "^0.2.18",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "langchain": "^0.3.34"
+    "langchain": "^0.3.34",
+    "mongoose": "^8.19.1",
+    "zlib": "^1.0.5",
+    "zod": "^3.25.76"
   }
 }
